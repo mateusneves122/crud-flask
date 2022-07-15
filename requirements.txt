@@ -1,0 +1,7 @@
+flask
+flask_sqlalchemy
+psycopg2-binary
+flask_migrate
+flask_marshmallow
+marshmallow-sqlalchemy==0.24.1
+marshmallow==3.9.1
