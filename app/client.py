@@ -48,7 +48,6 @@ def create():
                     "message": 'error in registration',
                     "error": 'Error request'
                 })
-    return {}, 200
 
 @bp_clients.route('/client/<identificador>', methods=['PUT'])
 def upgrade(identificador):
