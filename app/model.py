@@ -13,5 +13,5 @@ class Client(db.Model):
     id = db.Column(db.Integer, primary_key=True, nullable=False)
     name = db.Column(db.String(80), nullable=False)
     corporate_name = db.Column(db.String(100), nullable=False)
-    cnpf = db.Column(db.String(20), nullable=False)
+    cnpj = db.Column(db.String(20), nullable=False)
     created_date = db.Column(db.DateTime(timezone=True), default=func.now())

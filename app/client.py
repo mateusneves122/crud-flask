@@ -1,29 +1,40 @@
-import imp
-from flask import Blueprint, current_app, request, jsonify
+from http import client
+from flask import Blueprint, current_app, request, jsonify, Response
 from .model import Client
 from .schema import ClientSchema
 
 bp_clients = Blueprint('client', __name__)
 
 
-@bp_clients.route('/findAll', methods=['GET'])
+@bp_clients.route('/client', methods=['GET'])
 def findAll():
-    ...
+    result = Client.query.all()
+    return ClientSchema(many=True).jsonify(result), 200
 
 
-@bp_clients.route('/findOne', methods=['GET'])
-def findOne():
-    ...
+@bp_clients.route('/client/<identificador>', methods=['GET'])
+def findOne(identificador):
+    
+    client = Client.query.filter(Client.id == identificador).first()
+    
+    print(client)
+    
+    return ClientSchema(many=False).jsonify(client), 200
 
-@bp_clients.route('/create', methods=['POST'])
+
+@bp_clients.route('/client', methods=['POST'])
 def create():
     cs = ClientSchema()
-    client, error = cs.load(request.json)
+
+    client = cs.load(request.json)
+
     current_app.db.session.add(client)
     current_app.db.session.commit()
-    
 
-@bp_clients.route('/upgrade/<identificador>', methods=['PUT'])
+
+    return {}, 200
+
+@bp_clients.route('/client/<identificador>', methods=['PUT'])
 def upgrade(identificador):
     cs = ClientSchema()
     query = Client.query.filter(Client.id == identificador)
@@ -32,7 +43,7 @@ def upgrade(identificador):
     return cs.jsonify(query.first())
 
 
-@bp_clients.route('/delete/<identificador>', methods=['DELETE'])
+@bp_clients.route('/client/<identificador>', methods=['DELETE'])
 def delete(identificador):
     Client.query.filter(Client.id == identificador).delete()
     current_app.db.session.commit()

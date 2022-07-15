@@ -10,3 +10,5 @@ def configure(app):
 class ClientSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = Client
+        include_relationships = True
+        load_instance = True

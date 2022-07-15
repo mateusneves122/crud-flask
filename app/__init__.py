@@ -6,7 +6,7 @@ from .schema import configure as config_ma
 def create_app():
     app = Flask(__name__);
    
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://localhost/test1';
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://localhost/smartnx';
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False;
     
     config_db(app);
