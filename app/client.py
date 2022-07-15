@@ -1,10 +1,11 @@
-from http import client
-from flask import Blueprint, current_app, request, jsonify, Response
+from asyncio import exceptions
+import json
+from warnings import catch_warnings
+from flask import Blueprint, current_app, request, jsonify
 from .model import Client
 from .schema import ClientSchema
 
 bp_clients = Blueprint('client', __name__)
-
 
 @bp_clients.route('/client', methods=['GET'])
 def findAll():
@@ -16,10 +17,15 @@ def findAll():
 def findOne(identificador):
     
     client = Client.query.filter(Client.id == identificador).first()
-    
-    print(client)
-    
-    return ClientSchema(many=False).jsonify(client), 200
+
+    if(client == None):
+        return jsonify ({
+                    "status": 400,
+                    "message": 'ID not found',
+                    "error": 'ID INVALID'
+        }) 
+    else:
+        return ClientSchema(many=False).jsonify(client)
 
 
 @bp_clients.route('/client', methods=['POST'])
@@ -28,10 +34,20 @@ def create():
 
     client = cs.load(request.json)
 
-    current_app.db.session.add(client)
-    current_app.db.session.commit()
-
-
+    try:
+        current_app.db.session.add(client)
+        current_app.db.session.commit()
+        return jsonify ({
+                    "status": 200,
+                    "message": 'registered successfully',
+                    "error": 'null'
+                })
+    except Exception as e:
+                return jsonify ({
+                    "status": 400,
+                    "message": 'error in registration',
+                    "error": 'Error request'
+                })
     return {}, 200
 
 @bp_clients.route('/client/<identificador>', methods=['PUT'])
@@ -45,6 +61,20 @@ def upgrade(identificador):
 
 @bp_clients.route('/client/<identificador>', methods=['DELETE'])
 def delete(identificador):
-    Client.query.filter(Client.id == identificador).delete()
-    current_app.db.session.commit()
-    return jsonify('deletado')
+    client = Client.query.filter(Client.id == identificador).first()
+    
+    print(client)
+    
+    if(client == None):
+        return jsonify ({
+                    "status": 400,
+                    "message": 'ID not found',
+                    "error": 'ID INVALID'
+        }) 
+    else:
+        client = Client.query.filter(Client.id == identificador).delete()
+        current_app.db.session.commit()
+        return jsonify({                 
+                    "status": 200,
+                    "message": 'successfully deleted',
+                    "error": 'null'})
